@@ -1,0 +1,23 @@
+{
+  "name": "slack-archiver",
+  "version": "0.0.1",
+  "description": "Create daily digest archives of Slack channels.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/markleybros/slack-archiver.git"
+  },
+  "author": "Aurifier",
+  "license": "SEE LICENSE IN LICENSE.md",
+  "bugs": {
+    "url": "https://github.com/markleybros/slack-archiver/issues"
+  },
+  "homepage": "https://github.com/markleybros/slack-archiver#readme",
+  "preferGlobal": true,
+  "bin": {
+    "slack-archiver": "./bin/slack-archiver.js"
+  }
+}
