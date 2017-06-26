@@ -1,3 +1,5 @@
 #!/usr/bin/env node
+var config = require('../config');
+var slack = require('slack');
 
-console.log('Hello, World!');
+slack.channels.list({'token':config.apiToken}, console.log);

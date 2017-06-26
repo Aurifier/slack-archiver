@@ -19,5 +19,8 @@
   "preferGlobal": true,
   "bin": {
     "slack-archiver": "./bin/slack-archiver.js"
+  },
+  "dependencies": {
+    "slack": "^8.3.1"
   }
 }
