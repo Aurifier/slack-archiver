@@ -43,5 +43,41 @@ describe("A SlackRetriever", function() {
                 done();
             });
     });
-    //TODO: What if channel isn't in channels?
+
+    it("should reject appropriately if the channel doesn't exist", function(done) {
+        var channelName = "floop";
+        var channels = {
+            "channels": [
+                {
+                    "id": "general",
+                    "name": "general"
+                },
+                {
+                    "id": "news",
+                    "name": "news"
+                }
+            ]
+        };
+
+        var slack = {
+            listChannels: function() {
+                return new Promise(function(resolve, reject) {
+                    resolve(channels);
+                });
+            }
+        };
+
+        var retriever = new SlackRetriever(slack);
+        var promise = retriever.getChannelHistory(channelName);
+
+        promise.
+            then(history => {
+                fail("Promise should have been rejected");
+                done();
+            })
+            .catch(err => {
+                expect(err).toEqual("The channel \"" + channelName + "\" was not found.");
+                done();
+            });
+    });
 });
