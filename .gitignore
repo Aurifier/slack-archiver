@@ -2,3 +2,4 @@ config.js
 node_modules/*
 !node_modules/WrapPromise.js
 !node_modules/SlackPromiser.js
+!node_modules/SlackRetriever.js

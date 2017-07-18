@@ -27,4 +27,32 @@ describe("A SlackPromiser", function() {
 
         expect(slack.channels.list).toHaveBeenCalledWith({'token':token}, jasmine.any(Function));
     });
+    //TODO: Verify what happens if we come back with errors
+
+    it("should be able to retrieve the history of a given channel", function(done) {
+        var expectedHistory = "floopemdoopem";
+        var token = "itsatokenIthnik";
+        var expectedId = "yerchannelHere";
+
+        var slack = {
+            channels: {
+                history: function(parameters, callback) {
+                    callback(null, expectedHistory);
+                }
+            }
+        };
+        spyOn(slack.channels, 'history').and.callThrough();
+
+        var promiser = new SlackPromiser(slack, token);
+        promiser.getChannelHistory(expectedId)
+            .then(function(history) {
+                expect(slack.channels.history).toHaveBeenCalledWith({'token':token, 'channel': expectedId}, jasmine.any(Function));
+                expect(history).toEqual(expectedHistory);
+                done();
+            })
+            .catch(function(err) {
+                fail(err);
+                done();
+            });
+    });
 });
