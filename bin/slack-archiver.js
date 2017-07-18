@@ -1,5 +1,19 @@
 #!/usr/bin/env node
 var config = require('../config');
-var slack = require('slack');
 
-slack.channels.list({'token':config.apiToken}, console.log);
+var retriever = setupRetriever();
+retriever.getChannelHistory(config.channel)
+    .then(history => {
+        console.log(history);
+    })
+    .catch(err => {
+        console.log(err);
+    });
+
+function setupRetriever() {
+    var slack = require('slack');
+    var SlackPromiser = require('SlackPromiser');
+    var SlackRetriever = require('SlackRetriever');
+
+    return new SlackRetriever(new SlackPromiser(slack, config.apiToken));
+}
