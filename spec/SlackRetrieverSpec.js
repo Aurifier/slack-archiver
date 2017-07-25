@@ -80,4 +80,43 @@ describe("A SlackRetriever", function() {
                 done();
             });
     });
+
+    it("should accept a Date to limit the range of messages retrieved", function(done) {
+        var channelId = "whateverchannel";
+        var dateToRetrieve = new Date(2017, 6, 20);
+        var expectedOldest = "1500508800.000000";
+        var expectedLatest = "1500595199.999999";
+
+        var slack = {
+            listChannels: function() {
+                var channels = {
+                    "channels": [
+                        {
+                            "id": channelId,
+                            "name": channelId
+                        }
+                    ]
+                };
+                return Promise.resolve(channels);
+            },
+            getChannelHistory: function(id, oldest, latest) {
+                return Promise.resolve({"Wrong!": ["It's", "a", "list."]});
+            }
+        }
+        spyOn(slack, 'getChannelHistory').and.callThrough();
+
+        var retriever = new SlackRetriever(slack);
+        var promise = retriever.getChannelHistory(channelId, dateToRetrieve);
+
+        promise.
+            then(history => {
+                expect(slack.getChannelHistory)
+                    .toHaveBeenCalledWith(jasmine.any(String), expectedOldest, expectedLatest);
+                done();
+            })
+            .catch(err => {
+                fail(err);
+                done();
+            });
+    });
 });

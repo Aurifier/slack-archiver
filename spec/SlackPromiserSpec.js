@@ -55,4 +55,35 @@ describe("A SlackPromiser", function() {
                 done();
             });
     });
+
+    it("should accept an oldest and latest timestamp, using them inclusively", function(done) {
+        var expectedOldest = "92803.0";
+        var expectedLatest = "9023421.934";
+        var slack = {
+            channels: {
+                history: function(parameters, callback) {
+                    callback(null, {"The history": "of everything"});
+                }
+            }
+        };
+        spyOn(slack.channels, "history").and.callThrough();
+
+        var promiser = new SlackPromiser(slack, 'atokenorsomething');
+        promiser.getChannelHistory('someid', expectedOldest, expectedLatest)
+            .then(history => {
+                expect(slack.channels.history).toHaveBeenCalledWith({
+                    'token': jasmine.any(String),
+                    'channel': jasmine.any(String),
+                    'inclusive': true,
+                    'oldest': expectedOldest,
+                    'latest': expectedLatest,
+                }, jasmine.any(Function));
+                done();
+            })
+            .catch(err => {
+                fail(err);
+                done();
+            });
+    });
+    //TODO: paging
 });

@@ -59,38 +59,5 @@ describe("A PromiseWrapper", function() {
                     done();
                 });
         });
-
-        //As it turns out, I don't think we require this
-        xit("should accept multiple parameters to pass to the function", function(done) {
-            var input1 = "Hello,";
-            var input2 = " World!";
-            wrapPromise(testEchoNoError, input1, input2)
-                .then(function(result) {
-                    expect(result).toEqual(input1 + input2);
-                    done();
-                })
-                .catch(function() {
-                    fail("The promise was rejected.");
-                    done();
-                });
-        });
-
-        //See https://stackoverflow.com/questions/5247060/in-javascript-is-there-equivalent-to-apply-that-doesnt-change-the-value-of-thi
-        //As it turns out, this is determined by the caller
-        xit("should preserve the state of the object the function is called against", function(done) {
-            var input1 = "Hiya,";
-            var input2 = " Earth!";
-            var echoer = new StatefulEchoer(input1);
-
-            wrapPromise(echoer.testEchoConcat.bind(echoer), input2)
-                .then(function(result) {
-                    expect(result).toEqual(input1 + input2);
-                    done();
-                })
-                .catch(function(err) {
-                    fail("The promise was rejected: " + err);
-                    done();
-                });
-        });
     });
 });
