@@ -56,7 +56,7 @@ describe("A SlackPromiser", function() {
             });
     });
 
-    it("should accept an oldest and latest timestamp, using them inclusively", function(done) {
+    it("should accept an oldest and latest timestamp, using them exclusively", function(done) {
         var expectedOldest = "92803.0";
         var expectedLatest = "9023421.934";
         var slack = {
@@ -74,7 +74,6 @@ describe("A SlackPromiser", function() {
                 expect(slack.channels.history).toHaveBeenCalledWith({
                     'token': jasmine.any(String),
                     'channel': jasmine.any(String),
-                    'inclusive': true,
                     'oldest': expectedOldest,
                     'latest': expectedLatest,
                 }, jasmine.any(Function));
@@ -85,5 +84,57 @@ describe("A SlackPromiser", function() {
                 done();
             });
     });
-    //TODO: paging
+
+    xit("should handle paging of results", function(done) {
+        var firstPageEarliest = "98274.0";
+        var message1 = {
+            "ts": "blorp",
+            "foo": "fookazoo"
+        };
+        var message2 = {
+            "ts": firstPageEarliest,
+            "foo": "bar"
+        };
+        var history1 = {
+            "messages": [message1, message2],
+            "has_more": true
+        };
+
+        var message3 = {"bat": "baz"};
+        var history2 = {
+            "messages": [message3],
+            "has_more": false
+        };
+        var historyProvider = jasmine.createSpy().and.returnValues(history1, history2);
+        var slack = {
+            channels: {
+                history: function(parameters, callback) {
+                    callback(null, historyProvider());
+                }
+            }
+        };
+        spyOn(slack.channels, "history").and.callThrough();
+
+        var promiser = new SlackPromiser(slack, "token");
+        promiser.getChannelHistory('channelId')
+            .then(history => {
+                //Assert that we called slack.channels.history twice, with the correct parameters
+                expect(slack.channels.history).toHaveBeenCalledWith({
+                    'token': jasmine.any(String),
+                    'channel': jasmine.any(String),
+                    'latest': firstPageEarliest
+                });
+                expect(slack.channels.history).toHaveBeenCalledTimes(2);
+
+                //Assert that we have messages from both requests
+                expect(history.messages).toContain(message1);
+                expect(history.messages).toContain(message2);
+                expect(history.messages).toContain(message3);
+                done();
+            })
+            .catch(err => {
+                fail(err);
+                done();
+            });
+    });
 });

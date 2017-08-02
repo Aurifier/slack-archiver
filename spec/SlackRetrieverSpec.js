@@ -84,8 +84,8 @@ describe("A SlackRetriever", function() {
     it("should accept a Date to limit the range of messages retrieved", function(done) {
         var channelId = "whateverchannel";
         var dateToRetrieve = new Date(2017, 6, 20);
-        var expectedOldest = "1500508800.000000";
-        var expectedLatest = "1500595199.999999";
+        var expectedOldest = "1500508799.999999";
+        var expectedLatest = "1500595200.000000";
 
         var slack = {
             listChannels: function() {
