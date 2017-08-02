@@ -85,7 +85,7 @@ describe("A SlackPromiser", function() {
             });
     });
 
-    xit("should handle paging of results", function(done) {
+    it("should handle paging of results", function(done) {
         var firstPageEarliest = "98274.0";
         var message1 = {
             "ts": "blorp",
@@ -123,7 +123,7 @@ describe("A SlackPromiser", function() {
                     'token': jasmine.any(String),
                     'channel': jasmine.any(String),
                     'latest': firstPageEarliest
-                });
+                }, jasmine.any(Function));
                 expect(slack.channels.history).toHaveBeenCalledTimes(2);
 
                 //Assert that we have messages from both requests
