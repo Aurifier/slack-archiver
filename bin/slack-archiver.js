@@ -4,7 +4,7 @@ var config = require('../config');
 var retriever = setupRetriever();
 retriever.getChannelHistory(config.channel)
     .then(history => {
-        console.log(history);
+        console.log(history.messages.length);
     })
     .catch(err => {
         console.log(err);

@@ -137,4 +137,51 @@ describe("A SlackPromiser", function() {
                 done();
             });
     });
+
+    it("should handle more than two pages of results", function(done) {
+        var message1 = {
+            "ts": "foo"
+        };
+        var message2 = {
+            "ts": "bar"
+        };
+        var message3 = {
+            "ts": "baz"
+        };
+
+        var history1 = {
+            "messages": [message1],
+            "has_more": true
+        };
+        var history2 = {
+            "messages": [message2],
+            "has_more": true
+        };
+        var history3 = {
+            "messages": [message3],
+            "has_more": false
+        };
+        var historyProvider = jasmine.createSpy().and.returnValues(history1, history2, history3);
+        var slack = {
+            channels: {
+                history: function(parameters, callback) {
+                    callback(null, historyProvider());
+                }
+            }
+        };
+        spyOn(slack.channels, "history").and.callThrough();
+
+        var promiser = new SlackPromiser(slack, "t0k3n");
+        promiser.getChannelHistory("foopchannel")
+            .then(history => {
+                expect(history.messages).toContain(message1);
+                expect(history.messages).toContain(message2);
+                expect(history.messages).toContain(message3);
+                done();
+            })
+            .catch(err => {
+                fail(err);
+                done();
+            });
+    });
 });
